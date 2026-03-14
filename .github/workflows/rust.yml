@@ -1,0 +1,29 @@
+name: Build Rust EXE
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: 1. 下载你的代码
+      uses: actions/checkout@v4
+
+    - name: 2. 配置 Rust 环境
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        targets: x86_64-pc-windows-msvc
+
+    - name: 3. 施展魔法：编译并进行极限体积压缩
+      run: cargo build --release
+
+    - name: 4. 上传成品 EXE 供你下载
+      uses: actions/upload-artifact@v4
+      with:
+        name: MklinkTool_Rust_Tiny_EXE
+        path: target/release/mklink_tool_rust.exe
