@@ -1,6 +1,5 @@
 name: Build Mklink EXE
 
-# 当你提交代码，或者手动点击运行按钮时触发
 on:
   push:
     branches: [ "main" ]
@@ -8,22 +7,23 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest # 借用 GitHub 的 Windows 服务器
+    runs-on: windows-latest
 
     steps:
     - name: 1. 下载你的代码
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: 2. 安装 .NET 8 环境
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
-    - name: 3. 施展魔法：编译压缩为超小单文件 EXE
-      run: dotnet publish MklinkTool.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -o output
+    - name: 3. 编译打包单文件 EXE
+      # 去掉了 PublishTrimmed 参数，防止报错
+      run: dotnet publish MklinkTool.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o output
 
-    - name: 4. 把编译好的 EXE 上传给你下载
-      uses: actions/upload-artifact@v3
+    - name: 4. 上传成品供下载
+      uses: actions/upload-artifact@v4
       with:
         name: MklinkTool_Windows_EXE
         path: output/MklinkTool.exe
